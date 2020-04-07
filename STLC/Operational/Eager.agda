@@ -7,16 +7,14 @@ open import Data.Product using (∃-syntax; _,_)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Data.Nat using (ℕ; suc)
 open import Data.Fin renaming (zero to fzero; suc to fsuc)
-open import Data.Fin.Properties renaming (<-cmp to fin-cmp)
-open import Relation.Binary.Definitions using (tri<; tri≈; tri>)
-open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 
 private
   variable
     n : ℕ
     L M M' N N' : Term n
-    A : Type
+    A B : Type
     Γ : Ctx n
+    v : Fin n
 
 data Value {n} : Term n → Set where
   abs-value
@@ -95,3 +93,16 @@ progress (ty-projₗ t) with progress t
 progress (ty-projᵣ t) with progress t
 ... | inj₁ (pair-value {N = N} M-value N-value) = inj₂ (N , red-projᵣ M-value N-value)
 ... | inj₂ (t' , t-step) = inj₂ (projᵣ t' , red-projᵣ-inner t-step)
+
+{-preservation : ● ⊢ M ∈ A → M ↦ N → ● ⊢ N ∈ A
+preservation (ty-app M-ty N-ty) (red-head M-step) = ty-app (preservation M-ty M-step) N-ty
+preservation (ty-app M-ty N-ty) (red-arg M-val N-step) =
+  ty-app M-ty (preservation N-ty N-step)
+preservation (ty-app (ty-abs body-ty) N-ty) (red-β N-value) = {!!}
+preservation (ty-pair M-ty N-ty) (red-left M-step) = ty-pair (preservation M-ty M-step) N-ty
+preservation (ty-pair M-ty N-ty) (red-right _ N-step) =
+  ty-pair M-ty (preservation N-ty N-step)
+preservation (ty-projₗ M-ty) (red-projₗ-inner M-step) = ty-projₗ (preservation M-ty M-step)
+preservation (ty-projₗ (ty-pair M-ty _)) (red-projₗ _ _) = M-ty
+preservation (ty-projᵣ M-ty) (red-projᵣ-inner M-step) = ty-projᵣ (preservation M-ty M-step)
+preservation (ty-projᵣ (ty-pair _ N-ty)) (red-projᵣ _ _) = N-ty-}
