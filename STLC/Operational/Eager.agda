@@ -144,7 +144,6 @@ subst-neq {Γ = Γ ,- C} (fsuc fin) fzero vzero _ | no neq = vzero
 subst-neq {Γ = Γ ,- C} (fsuc fin) (fsuc fin') (vsuc v-typing) neq | no _ =
   vsuc (subst-neq fin fin' v-typing λ { assump → neq (cong fsuc assump) })
 
-{-
 -- | The substitution lemma: Substitution preserves typing.
 subst
   : ∀ {Γ : Ctx n}
@@ -160,7 +159,7 @@ subst {v = fsuc v} {Γ = Γ ,- C} (ty-var {v = fzero} vzero) typing | no neq = t
 subst {v = fsuc v} {Γ = Γ ,- C} (ty-var {v = fsuc v'} (vsuc v-typing)) typing | no neq
   with v ≟ v'
 ... | yes eq = ⊥-elim (neq (cong fsuc (sym eq)))
-... | no neq' = ty-var (vsuc (subst-neq v v' v-typing {!neq'!}))
+... | no neq' = ty-var (vsuc (subst-neq v v' v-typing _))
 subst ty-⋆ _ = ty-⋆
 subst (ty-pair l r) typing = ty-pair (subst l typing) (subst r typing)
 subst (ty-projₗ p) typing = ty-projₗ (subst p typing)
@@ -178,4 +177,3 @@ preservation (ty-projₗ M-ty) (red-projₗ-inner M-step) = ty-projₗ (preserva
 preservation (ty-projₗ (ty-pair M-ty _)) (red-projₗ _ _) = M-ty
 preservation (ty-projᵣ M-ty) (red-projᵣ-inner M-step) = ty-projᵣ (preservation M-ty M-step)
 preservation (ty-projᵣ (ty-pair _ N-ty)) (red-projᵣ _ _) = N-ty
--}
